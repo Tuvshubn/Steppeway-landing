@@ -1,0 +1,9 @@
+import axios from 'axios';
+const BASE = import.meta.env.VITE_API_URL || 'https://steppeway-back-end.vercel.app/';
+const api = axios.create({ baseURL: BASE });
+export const getHero = () => api.get('/api/hero');
+export const getAbout = () => api.get('/api/about');
+export const getTours = () => api.get('/api/tours');
+export const getContact = () => api.get('/api/contact');
+export const sendMessage = (data) => api.post('/api/contact/message', data);
+export const getImageUrl = (url) => url ? `${BASE}${url}` : null;
