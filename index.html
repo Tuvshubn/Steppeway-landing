@@ -1,13 +1,66 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mongol Travel</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+
+  <!-- ═══════════════════════════════════════════
+       BASIC SEO
+  ═══════════════════════════════════════════ -->
+  <title>Steppeway Travel | Discover Mongolia — Nomadic Adventures & Steppe Expeditions</title>
+  <meta name="description" content="Steppeway Travel specializes in authentic Mongolia travel experiences — from the vast Gobi Desert to the rolling steppes, nomadic homestays, horse trekking, and Naadam festivals. Book your Mongolian adventure today." />
+  <meta name="keywords" content="Steppeway Travel, Mongolia travel, Mongolia tours, Gobi Desert tour, Mongolian steppe, nomadic travel, horse trekking Mongolia, Ulaanbaatar tours, Naadam festival, Mongolia adventure travel, yurt stay Mongolia, Trans-Mongolian railway, Central Asia travel, Mongolia vacation packages" />
+  <meta name="author" content="Steppeway Travel" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#1e40af" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Ctext x='4' y='24' font-family='Arial,sans-serif' font-size='22' font-weight='900' fill='white'%3ES%3C/text%3E%3Cg transform='translate(24,10) rotate(45)'%3E%3Cline x1='0' y1='-5' x2='0' y2='4' stroke='%23fbbf24' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='-4' y1='-1' x2='4' y2='-1' stroke='%23fbbf24' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='-2' y1='3' x2='2' y2='3' stroke='%23fbbf24' stroke-width='1.5' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%231d4ed8'/%3E%3Ctext x='22' y='138' font-family='Arial,sans-serif' font-size='130' font-weight='900' fill='white'%3ES%3C/text%3E%3Cg transform='translate(148,52) rotate(45)'%3E%3Cline x1='0' y1='-28' x2='0' y2='22' stroke='%23fbbf24' stroke-width='9' stroke-linecap='round'/%3E%3Cline x1='-22' y1='-4' x2='22' y2='-4' stroke='%23fbbf24' stroke-width='9' stroke-linecap='round'/%3E%3Cline x1='-12' y1='18' x2='12' y2='18' stroke='%23fbbf24' stroke-width='9' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E" />
+  <link rel="canonical" href="https://www.steppewaytravel.com/" />
+
+
+  <!-- ═══════════════════════════════════════════
+       OPEN GRAPH (Facebook, LinkedIn, WhatsApp)
+  ═══════════════════════════════════════════ -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Steppeway Travel" />
+  <meta property="og:title" content="Steppeway Travel | Discover Mongolia — Nomadic Adventures & Steppe Expeditions" />
+  <meta property="og:description" content="Experience the raw beauty of Mongolia with Steppeway Travel. Explore the Gobi Desert, sleep in traditional gers, ride horses across endless steppes, and immerse yourself in nomadic culture." />
+  <meta property="og:url" content="https://www.steppewaytravel.com/" />
+  <meta property="og:image" content="https://www.steppewaytravel.com/og-mongolia.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Steppeway Travel — Mongolian Steppe Horseback Adventure" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- ═══════════════════════════════════════════
+       TWITTER / X CARD
+  ═══════════════════════════════════════════ -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@SteppewayTravel" />
+  <meta name="twitter:creator" content="@SteppewayTravel" />
+  <meta name="twitter:title" content="Steppeway Travel | Discover Mongolia — Nomadic Adventures & Steppe Expeditions" />
+  <meta name="twitter:description" content="From the Gobi Desert to the northern taiga — Steppeway Travel crafts unforgettable Mongolia journeys. Ger camps, eagle hunters, horse trekking & more." />
+<!--  <meta name="twitter:image" content="https://www.steppewaytravel.com/og-mongolia.jpg" />-->
+  <meta name="twitter:image:alt" content="Mongolian steppe landscape — Steppeway Travel" />
+
+  <!-- ═══════════════════════════════════════════
+       GEO / LANGUAGE
+  ═══════════════════════════════════════════ -->
+  <meta name="language" content="English" />
+  <meta name="geo.region" content="MN" />
+  <meta name="geo.placename" content="Ulaanbaatar, Mongolia" />
+  <meta name="geo.position" content="47.8864;106.9057" />
+  <meta name="ICBM" content="47.8864, 106.9057" />
+  <meta name="revisit-after" content="7 days" />
+<!--  <link rel="alternate" hreflang="en" href="https://www.steppewaytravel.com/" />-->
+<!--  <link rel="alternate" hreflang="mn" href="https://www.steppewaytravel.com/mn/" />-->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="/src/main.jsx"></script>
+</body>
 </html>
