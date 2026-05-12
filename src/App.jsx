@@ -419,8 +419,13 @@ export default function App() {
             </div>
           )}
 
-          {!tours.length ? (
-            <div className="loading"><div className="spinner" /></div>
+          {tours.length === 0 ? (
+            <div className="tours-empty">
+              <div className="tours-empty-icon">🗺</div>
+              <div className="tours-empty-title">Tours Coming Soon</div>
+              <div className="tours-empty-sub">We are preparing exciting tours for you. Check back soon or contact us for custom tours.</div>
+              <span className="btn-primary" style={{display:'inline-flex',marginTop:'1.5rem',cursor:'pointer'}} onClick={() => document.getElementById('contact')?.scrollIntoView({behavior:'smooth'})}>Contact Us</span>
+            </div>
           ) : (
             <>
               <div className="tours-grid">

@@ -777,3 +777,16 @@ footer {
   .about-stats { grid-template-columns:repeat(3,1fr); }
   .hero-stats { gap:1.5rem; }
 }
+
+/* Empty state */
+.tours-empty {
+  text-align: center; padding: 5rem 2rem;
+  max-width: 480px; margin: 0 auto;
+}
+.tours-empty-icon { font-size: 4rem; margin-bottom: 1.5rem; opacity: .5; }
+.tours-empty-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 700;
+  color: var(--dark); margin-bottom: .75rem;
+}
+.tours-empty-sub { color: var(--muted); font-size: .97rem; line-height: 1.75; }
