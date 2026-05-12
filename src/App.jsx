@@ -2,82 +2,153 @@ import { useState, useEffect } from 'react';
 import './index.css';
 import { getHero, getAbout, getTours, getContact, sendMessage, getImageUrl } from './api';
 
-const TOURS_PER_PAGE = 3;
+const TOURS_PER_PAGE = 6;
 
-const t = {
-  mn: {
-    nav: ['Нүүр', 'Бидний тухай', 'Аяллууд', 'Холбоо барих'],
-    badge: 'Аялалын туршлага',
-    heroBtn1: 'Аяллууд харах', heroBtn2: 'Холбоо барих',
-    aboutLabel: 'Бидний тухай', toursLabel: 'Аяллууд', toursTitle: 'Онцлох аяллууд',
-    contactLabel: 'Холбоо барих', contactTitle: 'Бидэнтэй холбогдох',
-    name: 'Нэр', email: 'Имэйл', phone: 'Утас', message: 'Мессеж',
-    send: 'Илгээх', sending: 'Илгээж байна...', sent: 'Амжилттай илгээлээ!',
-    phone_l: 'Утас', email_l: 'Имэйл', address_l: 'Хаяг', follow: 'Сүлжээ',
-    footer: '© 2026 Steppeway. Бүх эрх хуулиар хамгаалагдсан.',
-    years: 'Жил', clients: 'Жуулчид', tours_s: 'Аяллууд',
-    bookNow: 'Захиалах', viewDetail: 'Дэлгэрэнгүй →',
-    duration: 'Хугацаа', price: 'Үнэ',
-    close: 'Хаах', book: 'Захиалга өгөх',
-    prev: '← Өмнөх', next: 'Дараах →',
-    scroll: 'Гүйлгэх',
-    noTours: 'Аялал байхгүй байна',
-  },
-  en: {
-    nav: ['Home', 'About', 'Tours', 'Contact'],
-    badge: 'Travel Experience',
-    heroBtn1: 'Explore Tours', heroBtn2: 'Contact Us',
-    aboutLabel: 'About Us', toursLabel: 'Tours', toursTitle: 'Featured Tours',
-    contactLabel: 'Contact', contactTitle: 'Get In Touch',
-    name: 'Name', email: 'Email', phone: 'Phone', message: 'Message',
-    send: 'Send Message', sending: 'Sending...', sent: 'Message sent!',
-    phone_l: 'Phone', email_l: 'Email', address_l: 'Address', follow: 'Social',
-    footer: '© 2026 Steppeway. All rights reserved.',
-    years: 'Years', clients: 'Travelers', tours_s: 'Tours',
-    bookNow: 'Book Now', viewDetail: 'View Details →',
-    duration: 'Duration', price: 'Price',
-    close: 'Close', book: 'Book This Tour',
-    prev: '← Previous', next: 'Next →',
-    scroll: 'Scroll',
-    noTours: 'No tours available',
-  }
+const T = {
+  nav: ['Home', 'About', 'Tours', 'Contact'],
+  badge: 'Travel Experience',
+  heroBtn1: 'Explore Tours', heroBtn2: 'Contact Us',
+  aboutLabel: 'About Us', toursLabel: 'Tours', toursTitle: 'Featured Tours',
+  contactLabel: 'Contact', contactTitle: 'Get In Touch',
+  name: 'Name', email: 'Email', phone: 'Phone', message: 'Message',
+  send: 'Send Message', sending: 'Sending...', sent: 'Message sent!',
+  phone_l: 'Phone', email_l: 'Email', address_l: 'Address', follow: 'Social',
+  footer: '© 2026 Steppeway. All rights reserved.',
+  years: 'Years', clients: 'Travelers', tours_s: 'Tours',
+  bookNow: 'Book Now', viewDetail: 'View Details',
+  duration: 'Duration', price: 'Price', groupSize: 'Group Size',
+  difficulty: 'Difficulty', season: 'Best Season',
+  close: 'Close', book: 'Book This Tour',
+  prev: '← Prev', next: 'Next →',
+  noTours: 'No tours available',
+  highlights: 'Highlights', itinerary: 'Itinerary', overview: 'Overview',
+  day: 'Day', included: "What's Included", notIncluded: "Not Included",
+  from: 'From',
+  allTours: 'All Tours',
+  filterAll: 'All', filterAdventure: 'Adventure', filterCultural: 'Cultural',
+  filterNature: 'Nature', filterWildlife: 'Wildlife',
+  perPerson: 'per person',
 };
 
-// Tour Detail Modal
-function TourModal({ tour, lang, T, onClose, onBook }) {
+const DIFFICULTY_COLOR = {
+  Easy: '#22c55e', Moderate: '#f59e0b', Challenging: '#ef4444', Expert: '#8b5cf6',
+};
+
+function TourDetailModal({ tour, onClose, onBook }) {
+  const [tab, setTab] = useState('overview');
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
   }, []);
+
+  const title = tour.title_en || tour.title_mn;
+  const desc = tour.description_en || tour.description_mn;
+  const duration = tour.duration_en || tour.duration_mn;
+  const highlights = tour.highlights ? (typeof tour.highlights === 'string' ? tour.highlights.split('\n').filter(Boolean) : tour.highlights) : [];
+  const itinerary = tour.itinerary ? (typeof tour.itinerary === 'string' ? tour.itinerary.split('\n').filter(Boolean) : tour.itinerary) : [];
+  const included = tour.included ? (typeof tour.included === 'string' ? tour.included.split('\n').filter(Boolean) : tour.included) : [];
+  const notIncluded = tour.not_included ? (typeof tour.not_included === 'string' ? tour.not_included.split('\n').filter(Boolean) : tour.not_included) : [];
+
   return (
-    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal">
-        <div className="modal-img">
+    <div className="detail-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="detail-modal">
+        {/* Header image */}
+        <div className="detail-hero">
           {tour.image_url
-            ? <img src={getImageUrl(tour.image_url)} alt={tour.title_mn} />
-            : <div className="modal-img-placeholder">🌄</div>
+            ? <img src={getImageUrl(tour.image_url)} alt={title} />
+            : <div className="detail-hero-placeholder">🌄</div>
           }
+          <div className="detail-hero-overlay" />
+          <button className="detail-close" onClick={onClose}>✕</button>
+          <div className="detail-hero-content">
+            {tour.tour_type && <span className="detail-type-badge">{tour.tour_type}</span>}
+            <h2 className="detail-title">{title}</h2>
+            <div className="detail-meta-row">
+              {duration && <span>⏱ {duration}</span>}
+              {tour.group_size && <span>👥 {tour.group_size}</span>}
+              {tour.season && <span>📅 {tour.season}</span>}
+              {tour.difficulty && (
+                <span className="detail-difficulty" style={{ background: DIFFICULTY_COLOR[tour.difficulty] + '33', color: DIFFICULTY_COLOR[tour.difficulty] }}>
+                  ● {tour.difficulty}
+                </span>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="modal-body">
-          <div className="modal-header">
-            <div className="modal-title">{lang === 'mn' ? tour.title_mn : tour.title_en}</div>
-            <button className="modal-close" onClick={onClose}>✕</button>
+
+        {/* Price bar */}
+        <div className="detail-price-bar">
+          <div>
+            <span className="detail-price-from">{T.from}</span>
+            <span className="detail-price">{tour.price}</span>
+            <span className="detail-price-per">{T.perPerson}</span>
           </div>
-          <div className="modal-meta">
-            <div className="modal-meta-item">
-              <span>⏱</span>
-              <span><strong>{T.duration}:</strong> {lang === 'mn' ? tour.duration_mn : tour.duration_en}</span>
+          <button className="btn-book-detail" onClick={onBook}>📩 {T.book}</button>
+        </div>
+
+        {/* Tabs */}
+        <div className="detail-tabs">
+          {['overview', 'highlights', 'itinerary'].map(t => (
+            <button key={t} className={`detail-tab${tab === t ? ' active' : ''}`} onClick={() => setTab(t)}>
+              {t === 'overview' ? T.overview : t === 'highlights' ? T.highlights : T.itinerary}
+            </button>
+          ))}
+        </div>
+
+        <div className="detail-body">
+          {tab === 'overview' && (
+            <div className="detail-overview">
+              <p className="detail-desc">{desc}</p>
+              {(included.length > 0 || notIncluded.length > 0) && (
+                <div className="detail-included-grid">
+                  {included.length > 0 && (
+                    <div>
+                      <div className="detail-section-title">✅ {T.included}</div>
+                      <ul className="detail-list included">
+                        {included.map((item, i) => <li key={i}>{item}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                  {notIncluded.length > 0 && (
+                    <div>
+                      <div className="detail-section-title">❌ {T.notIncluded}</div>
+                      <ul className="detail-list not-included">
+                        {notIncluded.map((item, i) => <li key={i}>{item}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="modal-meta-item">
-              <span>💰</span>
-              <span><strong>{T.price}:</strong> <span style={{color:'var(--accent)',fontWeight:700}}>{tour.price}</span></span>
+          )}
+          {tab === 'highlights' && (
+            <div>
+              {highlights.length > 0 ? (
+                <div className="highlights-grid">
+                  {highlights.map((h, i) => (
+                    <div key={i} className="highlight-item">
+                      <span className="highlight-icon">✦</span>
+                      <span>{h}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : <p style={{ color: 'var(--muted)' }}>No highlights added yet.</p>}
             </div>
-          </div>
-          <div className="modal-desc">{lang === 'mn' ? tour.description_mn : tour.description_en}</div>
-          <div className="modal-actions">
-            {/*<button className="btn-primary" onClick={onBook}>{T.book}</button>*/}
-            <button className="btn-outline" onClick={onClose} style={{color:'var(--dark)',borderColor:'var(--border)'}}>{T.close}</button>
-          </div>
+          )}
+          {tab === 'itinerary' && (
+            <div>
+              {itinerary.length > 0 ? (
+                <div className="itinerary-list">
+                  {itinerary.map((item, i) => (
+                    <div key={i} className="itinerary-day">
+                      <div className="itinerary-day-num">{T.day} {i + 1}</div>
+                      <div className="itinerary-day-text">{item}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : <p style={{ color: 'var(--muted)' }}>No itinerary added yet.</p>}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -85,7 +156,6 @@ function TourModal({ tour, lang, T, onClose, onBook }) {
 }
 
 export default function App() {
-  const [lang, setLang] = useState('mn');
   const [menuOpen, setMenuOpen] = useState(false);
   const [hero, setHero] = useState(null);
   const [about, setAbout] = useState(null);
@@ -96,7 +166,8 @@ export default function App() {
   const [toast, setToast] = useState('');
   const [selectedTour, setSelectedTour] = useState(null);
   const [page, setPage] = useState(1);
-  const T = t[lang];
+  const [filter, setFilter] = useState('All');
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     getHero().then(r => setHero(r.data)).catch(() => {});
@@ -105,54 +176,67 @@ export default function App() {
     getContact().then(r => setContact(r.data)).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
 
   const handleSubmit = async (e) => {
     e.preventDefault(); setFormState('sending');
     try {
-      await sendMessage(form);
-      setFormState('sent');
+      await sendMessage(form); setFormState('sent');
       setForm({ name: '', email: '', phone: '', message: '' });
-      showToast(T.sent);
-      setTimeout(() => setFormState('idle'), 3000);
+      showToast(T.sent); setTimeout(() => setFormState('idle'), 3000);
     } catch { setFormState('idle'); }
   };
 
   const scrollTo = (id) => { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); setMenuOpen(false); };
 
-  const openBooking = () => { setSelectedTour(null); scrollTo('contact'); };
+  // Filter tours
+  const TYPES = ['All', ...new Set(tours.map(t => t.tour_type).filter(Boolean))];
+  const filtered = filter === 'All' ? tours : tours.filter(t => t.tour_type === filter);
+  const totalPages = Math.ceil(filtered.length / TOURS_PER_PAGE);
+  const pagedTours = filtered.slice((page - 1) * TOURS_PER_PAGE, page * TOURS_PER_PAGE);
 
-  // Pagination
-  const totalPages = Math.ceil(tours.length / TOURS_PER_PAGE);
-  const pagedTours = tours.slice((page - 1) * TOURS_PER_PAGE, page * TOURS_PER_PAGE);
+  const handleFilter = (f) => { setFilter(f); setPage(1); };
 
   return (
     <>
       {/* NAV */}
-      <nav>
-        <div className="nav-logo">Step<span>peway</span></div>
+      <nav className={scrolled ? 'scrolled' : ''}>
+        <div className="nav-logo" onClick={() => scrollTo('hero')} style={{ cursor: 'pointer' }}>
+          Step<span>peway</span>
+        </div>
         <div className="nav-links">
-          {['hero','about','tours','contact'].map((id, i) => (
+          {['hero', 'about', 'tours', 'contact'].map((id, i) => (
             <a key={id} href={`#${id}`} onClick={e => { e.preventDefault(); scrollTo(id); }}>{T.nav[i]}</a>
           ))}
-          <button className="lang-btn" onClick={() => setLang(l => l === 'mn' ? 'en' : 'mn')}>
-            {lang === 'mn' ? 'EN' : 'МН'}
-          </button>
         </div>
-        <div className="hamburger" onClick={() => setMenuOpen(o => !o)}>
-          <span /><span /><span />
+        <div className="nav-right">
+          <a className="nav-book-btn" onClick={() => scrollTo('contact')} href="#contact">{T.bookNow}</a>
+          <button className={`hamburger ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(o => !o)}>
+            <span /><span /><span />
+          </button>
         </div>
       </nav>
 
-      {/* MOBILE MENU */}
+      {/* MOBILE MENU — half screen drawer */}
       <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
-        {['hero','about','tours','contact'].map((id, i) => (
-          <a key={id} onClick={() => scrollTo(id)}>{T.nav[i]}</a>
-        ))}
-        <button className="lang-btn" onClick={() => setLang(l => l === 'mn' ? 'en' : 'mn')}>
-          {lang === 'mn' ? 'English' : 'Монгол'}
-        </button>
+        <div className="mobile-menu-header">
+          <div className="nav-logo">Step<span>peway</span></div>
+          <button className="mobile-close" onClick={() => setMenuOpen(false)}>✕</button>
+        </div>
+        <div className="mobile-menu-links">
+          {['hero', 'about', 'tours', 'contact'].map((id, i) => (
+            <a key={id} onClick={() => scrollTo(id)}>{T.nav[i]}</a>
+          ))}
+          <a className="mobile-book-btn" onClick={() => scrollTo('contact')}>{T.bookNow}</a>
+        </div>
       </div>
+      {menuOpen && <div className="mobile-menu-backdrop" onClick={() => setMenuOpen(false)} />}
 
       {/* HERO */}
       <section className="hero" id="hero">
@@ -161,25 +245,21 @@ export default function App() {
             hero.media_type === 'video'
               ? <video src={getImageUrl(hero.media_url)} autoPlay muted loop playsInline />
               : <img src={getImageUrl(hero.media_url)} alt="hero" />
-          ) : (
-            <div className="hero-media-placeholder" />
-          )}
+          ) : <div className="hero-media-placeholder" />}
         </div>
         <div className="hero-overlay" />
         <div className="hero-content">
           <div className="hero-badge">✦ {T.badge}</div>
           <h1 className="hero-title">
-            {hero ? (lang === 'mn' ? hero.title_mn : hero.title_en) : <>Монголыг<br /><em>Биечлэн Мэдэр</em></>}
+            {hero ? hero.title_en || hero.title_mn : <>Experience<br /><em>Mongolia</em></>}
           </h1>
-          <p className="hero-sub">
-            {hero ? (lang === 'mn' ? hero.subtitle_mn : hero.subtitle_en) : ''}
-          </p>
+          <p className="hero-sub">{hero ? hero.subtitle_en || hero.subtitle_mn : ''}</p>
           <div className="hero-btns">
             <a className="btn-primary" onClick={() => scrollTo('tours')} href="#tours">{T.heroBtn1}</a>
             <a className="btn-outline" onClick={() => scrollTo('contact')} href="#contact">{T.heroBtn2}</a>
           </div>
         </div>
-        <div className="hero-scroll">{T.scroll}</div>
+        <div className="hero-scroll">Scroll</div>
       </section>
 
       {/* ABOUT */}
@@ -189,13 +269,12 @@ export default function App() {
             <div className="about-img-wrap">
               {about?.image_url
                 ? <img src={getImageUrl(about.image_url)} alt="about" />
-                : <div className="about-img-placeholder">🏔</div>
-              }
+                : <div className="about-img-placeholder">🏔</div>}
             </div>
             <div className="about-text">
               <div className="section-eyebrow">✦ {T.aboutLabel}</div>
-              <h2 className="section-title">{about ? (lang === 'mn' ? about.title_mn : about.title_en) : 'Steppeway'}</h2>
-              <p>{about ? (lang === 'mn' ? about.content_mn : about.content_en) : ''}</p>
+              <h2 className="section-title">{about ? about.title_en || about.title_mn : 'Steppeway'}</h2>
+              <p>{about ? about.content_en || about.content_mn : ''}</p>
               <div className="about-stats">
                 <div><div className="stat-num">14+</div><div className="stat-label">{T.years}</div></div>
                 <div><div className="stat-num">500+</div><div className="stat-label">{T.clients}</div></div>
@@ -212,9 +291,22 @@ export default function App() {
           <div className="tours-header">
             <div>
               <div className="section-eyebrow">✦ {T.toursLabel}</div>
-              <h2 className="section-title" style={{marginBottom:0}}>{T.toursTitle}</h2>
+              <h2 className="section-title" style={{ marginBottom: 0 }}>{T.toursTitle}</h2>
             </div>
           </div>
+
+          {/* Filter tabs */}
+          {TYPES.length > 1 && (
+            <div className="tour-filters">
+              {TYPES.map(type => (
+                <button
+                  key={type}
+                  className={`filter-btn ${filter === type ? 'active' : ''}`}
+                  onClick={() => handleFilter(type)}
+                >{type}</button>
+              ))}
+            </div>
+          )}
 
           {!tours.length ? (
             <div className="loading"><div className="spinner" /></div>
@@ -222,27 +314,51 @@ export default function App() {
             <>
               <div className="tours-grid">
                 {pagedTours.map(tour => (
-                  <div className="tour-card" key={tour.id} onClick={() => setSelectedTour(tour)}>
-                    <div className="tour-img">
+                  <div className="tour-card" key={tour.id}>
+                    <div className="tour-img" onClick={() => setSelectedTour(tour)}>
                       {tour.image_url
-                        ? <img src={getImageUrl(tour.image_url)} alt={tour.title_mn} />
-                        : <div className="tour-img-placeholder">🌄</div>
-                      }
-                      <div className="tour-price-tag">{tour.price}</div>
+                        ? <img src={getImageUrl(tour.image_url)} alt={tour.title_en || tour.title_mn} />
+                        : <div className="tour-img-placeholder">🌄</div>}
+                      {tour.tour_type && <div className="tour-type-badge">{tour.tour_type}</div>}
                     </div>
                     <div className="tour-body">
-                      <div className="tour-title">{lang === 'mn' ? tour.title_mn : tour.title_en}</div>
-                      <div className="tour-desc">{lang === 'mn' ? tour.description_mn : tour.description_en}</div>
+                      <div className="tour-tags">
+                        {tour.difficulty && (
+                          <span className="tour-tag" style={{ background: (DIFFICULTY_COLOR[tour.difficulty] || '#64748b') + '18', color: DIFFICULTY_COLOR[tour.difficulty] || '#64748b' }}>
+                            {tour.difficulty}
+                          </span>
+                        )}
+                        {tour.season && <span className="tour-tag season">📅 {tour.season}</span>}
+                      </div>
+                      <div className="tour-title" onClick={() => setSelectedTour(tour)}>
+                        {tour.title_en || tour.title_mn}
+                      </div>
+                      <div className="tour-desc">{tour.description_en || tour.description_mn}</div>
+                      <div className="tour-info-row">
+                        {(tour.duration_en || tour.duration_mn) && (
+                          <span className="tour-info-item">⏱ {tour.duration_en || tour.duration_mn}</span>
+                        )}
+                        {tour.group_size && (
+                          <span className="tour-info-item">👥 {tour.group_size}</span>
+                        )}
+                      </div>
                       <div className="tour-footer">
-                        <span className="tour-duration">⏱ {lang === 'mn' ? tour.duration_mn : tour.duration_en}</span>
-                        <button className="tour-detail-btn">{T.viewDetail}</button>
+                        <div className="tour-price-wrap">
+                          <span className="tour-price-from">{T.from}</span>
+                          <span className="tour-price">{tour.price}</span>
+                        </div>
+                        <div className="tour-actions">
+                          <button className="tour-detail-btn" onClick={() => setSelectedTour(tour)}>{T.viewDetail}</button>
+                          <button className="tour-book-btn" onClick={() => { setSelectedTour(null); scrollTo('contact'); }}>
+                            {T.bookNow}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* PAGINATION */}
               {totalPages > 1 && (
                 <div className="pagination">
                   <button className="page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1}>‹</button>
@@ -266,15 +382,13 @@ export default function App() {
             <div className="contact-info">
               {contact?.phone && <div className="contact-item"><span className="contact-icon">📞</span><div><div className="contact-label">{T.phone_l}</div><div className="contact-val">{contact.phone}</div></div></div>}
               {contact?.email && <div className="contact-item"><span className="contact-icon">✉️</span><div><div className="contact-label">{T.email_l}</div><div className="contact-val">{contact.email}</div></div></div>}
-              {contact?.address_mn && <div className="contact-item"><span className="contact-icon">📍</span><div><div className="contact-label">{T.address_l}</div><div className="contact-val">{lang === 'mn' ? contact.address_mn : contact.address_en}</div></div></div>}
+              {contact?.address_en && <div className="contact-item"><span className="contact-icon">📍</span><div><div className="contact-label">{T.address_l}</div><div className="contact-val">{contact.address_en}</div></div></div>}
               {(contact?.facebook || contact?.instagram) && (
-                <div className="contact-item">
-                  <span className="contact-icon">🌐</span>
-                  <div>
-                    <div className="contact-label">{T.follow}</div>
-                    <div style={{display:'flex',gap:'1rem',marginTop:'0.4rem'}}>
-                      {contact.facebook && <a href={contact.facebook} target="_blank" rel="noreferrer" style={{color:'var(--accent)',fontWeight:500,textDecoration:'none'}}>Facebook</a>}
-                      {contact.instagram && <a href={contact.instagram} target="_blank" rel="noreferrer" style={{color:'var(--accent)',fontWeight:500,textDecoration:'none'}}>Instagram</a>}
+                <div className="contact-item"><span className="contact-icon">🌐</span>
+                  <div><div className="contact-label">{T.follow}</div>
+                    <div style={{ display: 'flex', gap: '1rem', marginTop: '0.4rem' }}>
+                      {contact.facebook && <a href={contact.facebook} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)', fontWeight: 500, textDecoration: 'none' }}>Facebook</a>}
+                      {contact.instagram && <a href={contact.instagram} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)', fontWeight: 500, textDecoration: 'none' }}>Instagram</a>}
                     </div>
                   </div>
                 </div>
@@ -282,12 +396,12 @@ export default function App() {
             </div>
             <form className="contact-form" onSubmit={handleSubmit}>
               <div className="form-row">
-                <div className="form-group"><label>{T.name} *</label><input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} required /></div>
-                <div className="form-group"><label>{T.phone}</label><input value={form.phone} onChange={e=>setForm(f=>({...f,phone:e.target.value}))} /></div>
+                <div className="form-group"><label>{T.name} *</label><input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required /></div>
+                <div className="form-group"><label>{T.phone}</label><input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} /></div>
               </div>
-              <div className="form-group"><label>{T.email}</label><input type="email" value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))} /></div>
-              <div className="form-group"><label>{T.message} *</label><textarea value={form.message} onChange={e=>setForm(f=>({...f,message:e.target.value}))} required /></div>
-              <button type="submit" className="btn-primary" disabled={formState==='sending'} style={{width:'100%',justifyContent:'center'}}>
+              <div className="form-group"><label>{T.email}</label><input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
+              <div className="form-group"><label>{T.message} *</label><textarea value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} required /></div>
+              <button type="submit" className="btn-primary" disabled={formState === 'sending'} style={{ width: '100%', justifyContent: 'center' }}>
                 {formState === 'sending' ? T.sending : T.send}
               </button>
             </form>
@@ -295,7 +409,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer>
         <div className="footer-inner">
           <div className="footer-logo">Step<span>peway</span></div>
@@ -307,12 +420,9 @@ export default function App() {
         </div>
       </footer>
 
-      {/* TOUR DETAIL MODAL */}
       {selectedTour && (
-        <TourModal
+        <TourDetailModal
           tour={selectedTour}
-          lang={lang}
-          T={T}
           onClose={() => setSelectedTour(null)}
           onBook={() => { setSelectedTour(null); scrollTo('contact'); }}
         />
