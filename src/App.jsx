@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './index.css';
-import { getHero, getAbout, getTours, getContact, sendMessage, getImageUrl, getTourDays } from './api';
+import { getHero, getAbout, getTours, getContact, sendMessage, getImageUrl, getTourDays, getTestimonials } from './api';
 
 const TOURS_PER_PAGE = 6;
 
@@ -187,12 +187,14 @@ export default function App() {
   const [selectedTour, setSelectedTour] = useState(null);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState('All');
+  const [testimonials, setTestimonials] = useState([]);
 
   useEffect(() => {
     getHero().then(r => setHero(r.data)).catch(() => {});
     getAbout().then(r => setAbout(r.data)).catch(() => {});
     getTours().then(r => setTours(r.data)).catch(() => {});
     getContact().then(r => setContact(r.data)).catch(() => {});
+    getTestimonials().then(r => setTestimonials(r.data)).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -491,21 +493,26 @@ export default function App() {
             <span className="eyebrow">What Our Travelers Say</span>
             <h2 className="section-title">Real Experiences,<br />Real Stories</h2>
           </div>
-          <div className="testi-grid">
-            {TESTIMONIALS.map((t, i) => (
-              <div key={i} className="testi-card">
-                <div className="testi-stars">{'★'.repeat(t.stars)}</div>
-                <p className="testi-text">{t.text}</p>
-                <div className="testi-author">
-                  <div className="testi-avatar">{t.initials}</div>
-                  <div>
-                    <div className="testi-name">{t.name}</div>
-                    <div className="testi-country">{t.country}</div>
+          {testimonials.length === 0 ? (
+            <div className="loading"><div className="spinner" /></div>
+          ) : (
+            <div className="testi-grid">
+              {testimonials.map((t) => (
+                <div key={t.id} className="testi-card">
+                  <div className="testi-stars">{'★'.repeat(t.stars)}</div>
+                  <p className="testi-text">"{t.text}"</p>
+                  <div className="testi-author">
+                    <div className="testi-avatar">{t.author_name?.[0]?.toUpperCase() || '?'}</div>
+                    <div>
+                      <div className="testi-name">{t.author_name}</div>
+                      {t.country && <div className="testi-country">{t.country}</div>}
+                      {t.tour_name && <div className="testi-country" style={{color:'var(--green-mid)',fontWeight:600}}>✦ {t.tour_name}</div>}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
