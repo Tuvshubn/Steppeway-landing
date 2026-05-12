@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './index.css';
-import { getHero, getAbout, getTours, getContact, sendMessage, getImageUrl } from './api';
+import { getHero, getAbout, getTours, getContact, sendMessage, getImageUrl, getTourDays } from './api';
 
 const TOURS_PER_PAGE = 6;
 
@@ -36,6 +36,15 @@ const DIFFICULTY_COLOR = {
 
 function TourDetailModal({ tour, onClose, onBook }) {
   const [tab, setTab] = useState('overview');
+  const [days, setDays] = useState([]);
+  const [daysLoading, setDaysLoading] = useState(true);
+
+  useEffect(() => {
+    getTourDays(tour.id)
+      .then(r => setDays(r.data))
+      .catch(() => {})
+      .finally(() => setDaysLoading(false));
+  }, [tour.id]);
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
@@ -137,16 +146,35 @@ function TourDetailModal({ tour, onClose, onBook }) {
           )}
           {tab === 'itinerary' && (
             <div>
-              {itinerary.length > 0 ? (
+              {daysLoading ? (
+                <div className="loading"><div className="spinner" /></div>
+              ) : days.length > 0 ? (
                 <div className="itinerary-list">
-                  {itinerary.map((item, i) => (
-                    <div key={i} className="itinerary-day">
-                      <div className="itinerary-day-num">{T.day} {i + 1}</div>
-                      <div className="itinerary-day-text">{item}</div>
+                  {days.map((day) => (
+                    <div key={day.id} className="itinerary-day-full">
+                      <div className="itinerary-day-header">
+                        <div className="itinerary-day-num">Day {day.day_number}</div>
+                        {day.title_en && <div className="itinerary-day-title">{day.title_en}</div>}
+                      </div>
+                      {day.description_en && (
+                        <p className="itinerary-day-desc">{day.description_en}</p>
+                      )}
+                      {day.images?.length > 0 && (
+                        <div className="itinerary-day-images">
+                          {day.images.map(img => (
+                            <div key={img.id} className="itinerary-img-wrap">
+                              <img src={getImageUrl(img.image_url)} alt={img.caption || `Day ${day.day_number}`} />
+                              {img.caption && <div className="itinerary-img-caption">{img.caption}</div>}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
-              ) : <p style={{ color: 'var(--muted)' }}>No itinerary added yet.</p>}
+              ) : (
+                <p style={{ color: 'var(--muted)', fontStyle: 'italic' }}>Маршрутын мэдээлэл удахгүй нэмэгдэнэ.</p>
+              )}
             </div>
           )}
         </div>
@@ -323,6 +351,10 @@ export default function App() {
                     </div>
                     <div className="tour-body">
                       <div className="tour-tags">
+                        {(tour.duration_en || tour.duration_mn) && (() => {
+                          const match = (tour.duration_en || tour.duration_mn || '').match(/\d+/);
+                          return match ? <span className="tour-tag days-tag">🗓 {match[0]} Days</span> : null;
+                        })()}
                         {tour.difficulty && (
                           <span className="tour-tag" style={{ background: (DIFFICULTY_COLOR[tour.difficulty] || '#64748b') + '18', color: DIFFICULTY_COLOR[tour.difficulty] || '#64748b' }}>
                             {tour.difficulty}

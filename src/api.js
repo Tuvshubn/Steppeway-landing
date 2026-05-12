@@ -7,3 +7,4 @@ export const getTours = () => api.get('/api/tours');
 export const getContact = () => api.get('/api/contact');
 export const sendMessage = (data) => api.post('/api/contact/message', data);
 export const getImageUrl = (url) => url ? `${BASE}${url}` : null;
+export const getTourDays = (tourId) => api.get(`/api/tours/${tourId}/days`);
